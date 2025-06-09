@@ -24,18 +24,21 @@ export function Timer({exercise, onNextExercise, timerState, onStateChanged}: Ti
 
   // Update timeLeft when exercise is updated
   useEffect(() => {
-    if (!exercise) return;
+    if (!exercise) {
+      setTimeLeft(0);
+      return;
+    }
 
     setTimeLeft(exercise.exercise.durationInSeconds);
   }, [exercise]);
 
   // Check if timer has reached 0
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (timeLeft === 0 && timerState === TimerState.RUNNING) {
       onNextExercise();
       setTimeLeft(undefined);
     }
-  }, [onNextExercise, timeLeft]);
+  }, [onNextExercise, timeLeft, timerState]);
 
   // Change timer when timerState is updated
   useEffect(() => {

@@ -9,19 +9,22 @@ import * as Crypto from 'expo-crypto';
 type ExerciseListProps = {
   data: ExerciseItemData[];
   nextExercise: boolean;
-  onSelectExercise: (selected: ExerciseItemData) => void;
+  onSelectExercise: (selected: ExerciseItemData | undefined) => void;
   onNewExercise: (exercise: ExerciseItemData) => void;
+  onRemoveExercise: (exercise: ExerciseItemData) => void;
   onTrainingEnded: () => void;
 };
 
-export function ExerciseList({data, nextExercise, onSelectExercise, onNewExercise, onTrainingEnded}: ExerciseListProps) {
-  const [selectedId, setSelectedId] = useState<string>();
+export function ExerciseList({data, nextExercise, onSelectExercise, onNewExercise, onRemoveExercise, onTrainingEnded}: ExerciseListProps) {
+  const [selectedId, setSelectedId] = useState<string | undefined>();
   const flatListRef = useRef<FlatList>(null);
   const [scrollIndex, setScrollIndex] = useState(0);
 
   useEffect(() => {
     if (data.length > 0) {
       onExerciseItemSelect(data[0]);
+    } else {
+      onSelectExercise(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -68,6 +71,7 @@ export function ExerciseList({data, nextExercise, onSelectExercise, onNewExercis
         onPress={() => onExerciseItemSelect(item)}
         selected={selected}
         onDuplicate={createExercise}
+        onDelete={onRemoveExercise}
       />
     );
   };

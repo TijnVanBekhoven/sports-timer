@@ -28,7 +28,7 @@ export function Clock({timeLeft}: ClockProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    marginBlock: 80,
     alignItems: 'center',
   },
   timerText: {

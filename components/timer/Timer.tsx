@@ -38,7 +38,7 @@ export function Timer({exercise, onNextExercise, timerState, onStateChanged}: Ti
       onNextExercise();
       setTimeLeft(undefined);
     }
-  }, [onNextExercise, timeLeft]);
+  }, [onNextExercise, timeLeft, timerState]);
 
   // Change timer when timerState is updated
   useEffect(() => {

@@ -5,63 +5,12 @@ import React, {useEffect, useState} from "react";
 import {Timer} from "@/components/timer/Timer";
 import {TimerState} from "@/enums/TimerState";
 import {VibrationService} from "@/services/VibrationService";
-
-const DATA: ExerciseItemData[] = [
-  {
-    id: '0',
-    exercise: {
-      type: "running",
-      durationInSeconds: 120,
-    }
-  },
-  {
-    id: '1',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 45,
-    }
-  },
-  {
-    id: '2',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 10,
-    }
-  },
-  {
-    id: '3',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 10,
-    }
-  },
-  {
-    id: '4',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 10,
-    }
-  },
-  {
-    id: '5',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 10,
-    }
-  },
-  {
-    id: '6',
-    exercise: {
-      type: "walking",
-      durationInSeconds: 10,
-    }
-  },
-]
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 export default function Index() {
-  const [data, setData] = useState<ExerciseItemData[]>(DATA);
+  const [data, setData] = useState<ExerciseItemData[]>([]);
   const [nextExercise, setNextExercise] = useState(false);
-  const [selectedExercise, setSelectedExercise] = useState<ExerciseItemData>();
+  const [selectedExercise, setSelectedExercise] = useState<ExerciseItemData | undefined>();
   const [timerState, setTimerState] = useState<TimerState>(TimerState.STOPPED);
 
   useEffect(() => {
@@ -77,7 +26,7 @@ export default function Index() {
     VibrationService.finishTraining();
   }
 
-  const onSelectExercise = (selected: ExerciseItemData) => {
+  const onSelectExercise = (selected: ExerciseItemData | undefined) => {
     setNextExercise(false);
     setSelectedExercise(selected);
 
@@ -91,22 +40,29 @@ export default function Index() {
     ]);
   };
 
+  const onRemoveExercise = (oldExercise: ExerciseItemData) => {
+    setData(prevData => prevData.filter(item => item.id !== oldExercise.id));
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Timer
-        exercise={selectedExercise}
-        onNextExercise={onNextExercise}
-        timerState={timerState}
-        onStateChanged={setTimerState}
-      />
-      <ExerciseList
-        data={data}
-        nextExercise={nextExercise}
-        onSelectExercise={onSelectExercise}
-        onNewExercise={onNewExercise}
-        onTrainingEnded={onTrainingEnded}
-      />
-    </SafeAreaView>
+    <GestureHandlerRootView>
+      <SafeAreaView style={styles.container}>
+        <Timer
+          exercise={selectedExercise}
+          onNextExercise={onNextExercise}
+          timerState={timerState}
+          onStateChanged={setTimerState}
+        />
+        <ExerciseList
+          data={data}
+          nextExercise={nextExercise}
+          onSelectExercise={onSelectExercise}
+          onNewExercise={onNewExercise}
+          onRemoveExercise={onRemoveExercise}
+          onTrainingEnded={onTrainingEnded}
+        />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 

@@ -1,17 +1,26 @@
 import {SafeAreaView, StyleSheet} from "react-native";
 import {ExerciseItemData} from "@/types/ExerciseItem";
 import {ExerciseList} from "@/components/exercise/ExerciseList";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Timer} from "@/components/timer/Timer";
 import {TimerState} from "@/enums/TimerState";
 import {VibrationService} from "@/services/VibrationService";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {IExerciseService} from "@/services/IExerciseService";
+import {SqlExerciseService} from "@/services/SqlExerciseService";
 
 export default function Index() {
   const [data, setData] = useState<ExerciseItemData[]>([]);
   const [nextExercise, setNextExercise] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<ExerciseItemData | undefined>();
   const [timerState, setTimerState] = useState<TimerState>(TimerState.STOPPED);
+  const exerciseService = useRef<IExerciseService>(new SqlExerciseService());
+
+  useEffect(() => {
+    exerciseService.current.getAllExercises().then((res) => {
+      setData(res);
+    });
+  }, [exerciseService]);
 
   useEffect(() => {
     if (timerState === TimerState.RUNNING) VibrationService.startTraining();
@@ -34,14 +43,18 @@ export default function Index() {
   }
 
   const onNewExercise = (newExercise: ExerciseItemData) => {
-    setData(prevData => [
-      ...prevData,
-      newExercise
-    ]);
+    exerciseService.current.addExercise(newExercise).then(() => {
+      setData(prevData => [
+        ...prevData,
+        newExercise
+      ]);
+    });
   };
 
   const onRemoveExercise = (oldExercise: ExerciseItemData) => {
-    setData(prevData => prevData.filter(item => item.id !== oldExercise.id));
+    exerciseService.current.deleteExercise(oldExercise.id).then(() => {
+      setData(prevData => prevData.filter(item => item.id !== oldExercise.id));
+    });
   }
 
   return (

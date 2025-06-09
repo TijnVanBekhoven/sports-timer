@@ -31,4 +31,12 @@ Select your release from the release section on this page
 and follow the details down below ⬇️.
 
 ### Android
-I don't know! I have not done this yet 😐.
+To install the app for Android follow along!
+
+1. Allow your browser to install applications.
+   How to do this for your device can be found online.
+2. Open the release you want to download.
+   This would most likely be the [latest](https://github.com/TijnVanBekhoven/sports-timer/releases/latest) release.
+3. Download the APK file and follow the installation process.
+
+You did it! 🎉

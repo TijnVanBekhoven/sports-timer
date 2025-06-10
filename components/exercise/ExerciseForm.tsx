@@ -1,12 +1,14 @@
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
-import {useState} from "react";
+import React, {useRef, useState} from "react";
 import {Exercise} from "@/types/Exercise";
 
 export function ExerciseForm({onSubmit}: {onSubmit: (exercise: Exercise) => void }) {
   const [exercise, setExercise] = useState<string>();
   const [minutes, setMinutes] = useState<number>();
   const [seconds, setSeconds] = useState<number>();
+  const minuteInputRef = useRef<TextInput>(null);
+  const secondInputRef = useRef<TextInput>(null);
 
   const minutesSet = (value: string) => setTime(value, 0, 99, setMinutes);
   const secondsSet = (value: string) => setTime(value, 0, 59, setSeconds);
@@ -17,6 +19,7 @@ export function ExerciseForm({onSubmit}: {onSubmit: (exercise: Exercise) => void
         placeholder={'Exercise'}
         inputMode={'text'}
         onChangeText={setExercise}
+        onSubmitEditing={() => minuteInputRef.current?.focus()}
         style={[styles.textInput, styles.exerciseInput]}
       />
       <View
@@ -28,6 +31,8 @@ export function ExerciseForm({onSubmit}: {onSubmit: (exercise: Exercise) => void
           value={minutes?.toString()}
           maxLength={2}
           onChangeText={minutesSet}
+          ref={minuteInputRef}
+          onSubmitEditing={() => secondInputRef.current?.focus()}
           style={[styles.textInput, styles.timeInput]}
         />
         <Text>:</Text>
@@ -37,6 +42,7 @@ export function ExerciseForm({onSubmit}: {onSubmit: (exercise: Exercise) => void
           value={seconds?.toString()}
           maxLength={2}
           onChangeText={secondsSet}
+          ref={secondInputRef}
           style={[styles.textInput, styles.timeInput]}
         />
       </View>

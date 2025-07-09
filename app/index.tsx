@@ -8,12 +8,14 @@ import {VibrationService} from "@/services/VibrationService";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {IExerciseService} from "@/services/IExerciseService";
 import {SqlExerciseService} from "@/services/SqlExerciseService";
+import {activateKeepAwakeAsync, deactivateKeepAwake} from "expo-keep-awake";
 
 export default function Index() {
   const [data, setData] = useState<ExerciseItemData[]>([]);
   const [nextExercise, setNextExercise] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<ExerciseItemData | undefined>();
   const [timerState, setTimerState] = useState<TimerState>(TimerState.STOPPED);
+  const [keepAwake, setKeepAwake] = useState<boolean>(false);
   const exerciseService = useRef<IExerciseService>(new SqlExerciseService());
 
   useEffect(() => {
@@ -24,7 +26,15 @@ export default function Index() {
 
   useEffect(() => {
     if (timerState === TimerState.RUNNING) VibrationService.startTraining();
+
+    if (timerState === TimerState.RUNNING) setKeepAwake(true);
+    else setKeepAwake(false);
   }, [timerState])
+
+  useEffect(() => {
+    if (!keepAwake) deactivateKeepAwake().then();
+    else activateKeepAwakeAsync().then();
+  }, [keepAwake]);
 
   const onNextExercise = () => {
     setNextExercise(true);

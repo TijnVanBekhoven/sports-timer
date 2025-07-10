@@ -43,7 +43,8 @@
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
     "expo-sqlite": "~15.2.12",
-    "expo-keep-awake": "~14.1.4"
+    "expo-keep-awake": "~14.1.4",
+    "expo-speech": "~13.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

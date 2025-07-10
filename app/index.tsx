@@ -9,6 +9,7 @@ import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {IExerciseService} from "@/services/IExerciseService";
 import {SqlExerciseService} from "@/services/SqlExerciseService";
 import {activateKeepAwakeAsync, deactivateKeepAwake} from "expo-keep-awake";
+import {TextToSpeechService} from "@/services/TextToSpeechService";
 
 export default function Index() {
   const [data, setData] = useState<ExerciseItemData[]>([]);
@@ -32,6 +33,15 @@ export default function Index() {
   }, [timerState])
 
   useEffect(() => {
+    if (timerState !== TimerState.RUNNING) return;
+    if (!selectedExercise) return;
+
+    TextToSpeechService.speak(
+      `${selectedExercise!.exercise.type}. ${formatTime(selectedExercise!.exercise.durationInSeconds)}`
+    );
+  }, [selectedExercise, timerState]);
+
+  useEffect(() => {
     if (!keepAwake) deactivateKeepAwake().then();
     else activateKeepAwakeAsync().then();
   }, [keepAwake]);
@@ -49,7 +59,9 @@ export default function Index() {
     setNextExercise(false);
     setSelectedExercise(selected);
 
-    if (timerState === TimerState.RUNNING) VibrationService.nextExercise();
+    if (timerState === TimerState.RUNNING) {
+      VibrationService.nextExercise();
+    }
   }
 
   const onNewExercise = (newExercise: ExerciseItemData) => {
@@ -87,6 +99,10 @@ export default function Index() {
       </SafeAreaView>
     </GestureHandlerRootView>
   );
+}
+
+function formatTime(timeInSeconds: number) {
+  return timeInSeconds % 60 === 0 ? `${Math.floor(timeInSeconds / 60)} minuten` : `${timeInSeconds} seconden`
 }
 
 const styles = StyleSheet.create({
